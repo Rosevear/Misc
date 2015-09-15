@@ -440,131 +440,121 @@ def K_mult(x: 'num', y: 'num') -> 'num':
         return (ac * (10 ** len(x_digits))) + (ad_plus_bc * (10 ** (len(x_digits) // 2))) + bd
 
 
-#TODO: Debug the partitioning section!!!
+#NOTE: Full implementation is part of the matrix class
 def S_matrix_mult(x: 'Matrix', y: 'Matrix') -> 'Matrix': 
     """
     Returns the product of matrix x times matrix y.
     """
 
-    #Determine the dimensions of the matrices
+    #Store the dimensions of the matrices
     x_matrix_size = x.dim()
     y_matrix_size = y.dim()
 
+    #Pad the matrices to make them square
+    if x_matrix_size[0] % 2 != 0:
+        new_row = LList()
+        for column in range(x_matrix_size[1]):
+            new_row.append(0)
+        x.matrix_body.append(new_row)
+    elif x_matrix_size[1] % 2 != 0:
+        for row in range(x_matrix_size[0]):
+            x.matrix_body[row].append(0)
 
-    #Check input validity
-    if x.dim()[1] != y.dim()[0]:
-        raise IndexError("There is a length mismatch between one of the columns in the first matrix and a row in the second!!!")
+    if y_matrix_size[0] % 2 != 0:
+        new_row = LList()
+        for column in range(y_matrix_size[1]):
+            new_row.append(0)
+        y.matrix_body.append(new_row)
+    elif y_matrix_size[1] % 2 != 0:
+        for row in range(y_matrix_size[0]):
+            y.matrix_body[row].append(0)
 
-    else:
-        #Base Case And Simpler Cases
-        if (y_matrix_size[0] <= 1): #The overhead of Strassen's algorithm is too much to make using it below matrices of this says pratical
-                rows = y.dim()[0]
-                columns = x.dim()[1]
-                matrix_product = Matrix(x.dim()[0], y.dim()[1])
-                for i in range(rows):
-                    for j in range(columns):
-                        current_dot_product = LList()
-                        for k in range(rows):
-                            if isinstance(x.matrix_body[i][k], (int, float)) and isinstance(y.matrix_body[k][j], (int, float)):
-                                current_dot_product.append(x.matrix_body[i][k] * y.matrix_body[k][j])
-                                matrix_product.setitem(i, j, sum(current_dot_product))
-                            else:
-                                raise TypeError("One of the elements in the input matrices is not a number!")
-                return matrix_product
+    #Partition the matrices into four submatrices
+    x_top_left = Matrix()
+    x_top_left.matrix_body = x.matrix_body[0:x_matrix_size[0] // 2]
+    print('top left body')
+    print(x_top_left.matrix_body)
+    for column in range(len(x_top_left.matrix_body)):
+        x_top_left.matrix_body[column] = x_top_left.matrix_body[column][0:x_matrix_size[1] // 2]
+    print(x_top_left)
 
-        #Recursive Case
-        else:
-            #Pad the matrices to make them even
-            if x_matrix_size[0] % 2 != 0:
-                new_row = LList()
-                for column in range(x_matrix_size[1]):
-                    new_row.append(0)
-                x.matrix_body.append(new_row)
-            elif x_matrix_size[1] % 2 != 0:
-                for row in range(x_matrix_size[0]):
-                    x.matrix_body[row].append(0)
+    x_bottom_left = Matrix()
+    x_bottom_left.matrix_body = x.matrix_body[x_matrix_size[0] // 2:]
+    print('bottom left body')
+    print(x_bottom_left.matrix_body)
+    for column in range(len(x_bottom_left.matrix_body)):
+        x_bottom_left.matrix_body[column] = x_bottom_left.matrix_body[column][0:x_matrix_size[1] // 2]
+    print(x_bottom_left)
 
-            if y_matrix_size[0] % 2 != 0:
-                new_row = LList()
-                for column in range(y_matrix_size[1]):
-                    new_row.append(0)
-                y.matrix_body.append(new_row)
-            elif y_matrix_size[1] % 2 != 0:
-                for row in range(y_matrix_size[0]):
-                    y.matrix_body[row].append(0)
+    x_top_right = Matrix()
+    x_top_right.matrix_body = x.matrix_body[0:x_matrix_size[0] // 2]
+    print(x_top_right.matrix_body)
+    for column in range(len(x_top_right.matrix_body)):
+        x_top_right.matrix_body[column] = x_top_right.matrix_body[column][x_matrix_size[1] // 2:x_matrix_size[1]] 
 
+    print(x_top_right)
 
-            print(x)
+    x_bottom_right = Matrix()
+    x_bottom_right.matrix_body = x.matrix_body[x_matrix_size[0] // 2:]
+    print(x_bottom_right.matrix_body)
+    for column in range(len(x_bottom_right.matrix_body)):
+        x_bottom_right.matrix_body[column] = x_bottom_right.matrix_body[column][x_matrix_size[1] // 2:x_matrix_size[1]]
 
-            #Partition the matrices into four submatrices
-            x_top_left = Matrix()
-            x_top_left.matrix_body = x.matrix_body[0:x_matrix_size[0] // 2]
-            for column in range(len(x_top_left.matrix_body)):
-                x_top_left.matrix_body[column] = x_top_left.matrix_body[column][0:x_matrix_size[1] // 2]
-            print(x_top_left)
+    print(x_bottom_right)
 
-            x_bottom_left = Matrix() 
-            x_bottom_left.matrix_body = x.matrix_body[x_matrix_size[0] // 2:x_matrix_size[0] - 1] 
-            for column in range(len(x_bottom_left.matrix_body)):
-                x_bottom_left.matrix_body[column] = x_bottom_left.matrix_body[column][0:x_matrix_size[1] // 2]
-            print(x_bottom_left)
-    
-            x_top_right = Matrix()
-            x_top_right.matrix_body = x.matrix_body[0:x_matrix_size[0] // 2]
-            for column in range(len(x_top_right.matrix_body)):
-                x_top_right.matrix_body[column] = x_top_right.matrix_body[column][x_matrix_size[1] // 2:x_matrix_size[1] - 1] 
+    y_top_left = Matrix()
+    y_top_left.matrix_body = y.matrix_body[0:y_matrix_size[0] // 2]
+    print('top left body')
+    print(y_top_left.matrix_body)
+    for column in range(len(y_top_left.matrix_body)):
+        y_top_left.matrix_body[column] = y_top_left.matrix_body[column][0:y_matrix_size[1] // 2]
+    print(y_top_left)
 
-            print(x_top_right)
+    y_bottom_left = Matrix()
+    y_bottom_left.matrix_body = y.matrix_body[y_matrix_size[0] // 2:]
+    print('bottom left body')
+    print(y_bottom_left.matrix_body)
+    for column in range(len(y_bottom_left.matrix_body)):
+        y_bottom_left.matrix_body[column] = y_bottom_left.matrix_body[column][0:y_matrix_size[1] // 2]
+    print(y_bottom_left)
 
-            x_bottom_right = Matrix()
-            x_bottom_right.matrix_body = x.matrix_body[x_matrix_size[0] // 2:x_matrix_size[0] - 1] 
-            for column in range(len(x_bottom_right.matrix_body)):
-                x_bottom_right.matrix_body[column] = x_bottom_right.matrix_body[column][x_matrix_size[1] // 2:x_matrix_size[1] - 1]
+    y_top_right = Matrix()
+    y_top_right.matrix_body = y.matrix_body[0:y_matrix_size[0] // 2]
+    print(y_top_right.matrix_body)
+    for column in range(len(y_top_right.matrix_body)):
+        y_top_right.matrix_body[column] = y_top_right.matrix_body[column][y_matrix_size[1] // 2:y_matrix_size[1]] 
 
-            print(x_bottom_right)
+    print(y_top_right)
 
-            y_top_left = Matrix()
-            y_top_left.matrix_body = y.matrix_body[0:y_matrix_size[0] // 2]
-            for column in range(len(y_top_left.matrix_body)):
-                y_top_left.matrix_body[column] = y_top_left.matrix_body[column][0:y_matrix_size[1] // 2]
+    y_bottom_right = Matrix()
+    y_bottom_right.matrix_body = y.matrix_body[y_matrix_size[0] // 2:]
+    print(y_bottom_right.matrix_body)
+    for column in range(len(y_bottom_right.matrix_body)):
+        y_bottom_right.matrix_body[column] = y_bottom_right.matrix_body[column][y_matrix_size[1] // 2:y_matrix_size[1]]
+    print(y_bottom_right)
 
-            y_bottom_left = Matrix()
-            y_bottom_left.matrix_body = y.matrix_body[y_matrix_size[0] // 2:y_matrix_size[0] - 1]
-            for column in range(len(y_bottom_left.matrix_body)):
-                y_bottom_left.matrix_body[column] = y_bottom_left.matrix_body[column][0:y_matrix_size[1] // 2] 
+    #Recursively compute Strassen's seven products 
+    p1 = S_matrix_mult(x_top_left, y_top_right - y_bottom_right)
+    p2 = S_matrix_mult(x_top_left + x_top_right, y_bottom_right)
+    p3 = S_matrix_mult(x_bottom_left + x_bottom_right, y_top_left)
+    p4 = S_matrix_mult(x_bottom_right, y_bottom_left - y_top_left)
+    p5 = S_matrix_mult(x_top_left + x_bottom_right, y_top_left + y_bottom_right)
+    p6 = S_matrix_mult(x_top_right - x_bottom_right, y_bottom_left + y_bottom_right)
+    p7 = S_matrix_mult(x_top_left - x_bottom_left, y_top_left + y_top_right)
 
-            y_top_right = Matrix()
-            y_top_right.matrix_body = y.matrix_body[0:y_matrix_size[0] // 2]
-            for column in range(len(x_top_right.matrix_body)):
-                y_top_right.matrix_body[column] = y_top_right.matrix_body[column][y_matrix_size[1] // 2:y_matrix_size[1] - 1] 
+    #Compute the matrix quadrants using the above products
+    top_left = p5 + p4 - p2 + p6
+    bottom_left = p3 + p4
+    top_right = p1 + p2
+    bottom_right = p1 + p5 - p3 - p2
 
-            y_bottom_right = Matrix()
-            y_bottom_right.matrix_body = y.matrix_body[y_matrix_size[0] // 2:y_matrix_size[0] - 1]
-            for column in range(len(y_bottom_right.matrix_body)):
-                y_bottom_right.matrix_body[column] = y_bottom_right.matrix_body[column][y_matrix_size[1] // 2:y_matrix_size[1] - 1] 
-
-            #Recursively compute Strassen's seven products 
-            p1 = S_matrix_mult(x_top_left, y_top_right - y_bottom_right)
-            p2 = S_matrix_mult(x_top_left + x_top_right, y_bottom_right)
-            p3 = S_matrix_mult(x_bottom_left + x_bottom_right, y_top_left)
-            p4 = S_matrix_mult(x_bottom_right, y_bottom_left - y_top_left)
-            p5 = S_matrix_mult(x_top_left + x_bottom_right, y_top_left + y_bottom_right)
-            p6 = S_matrix_mult(x_top_right - x_bottom_right, y_bottom_left + y_bottom_right)
-            p7 = S_matrix_mult(x_top_left - x_bottom_left, y_top_left + y_top_right)
-
-            #Compute the matrix quadrants using the above products
-            top_left = p5 + p4 - p2 + p6
-            bottom_left = p3 + p4
-            top_right = p1 + p2
-            bottom_right = p1 + p5 - p3 - p2
-
-            #Combine the above quadrants into the final matrix and return it
-            top_left.matrix_body.extend(bottom_left.matrix_body)
-            top_right.matrix_body.extend(bottom_right.matrix_body)
-            for i in range(top_left.dim()[0]):
-                top_left.matrix_body[i].extend(top_right.matrix_body[i])
-            #print(top_left)
-            return top_left
+    #Combine the above quadrants into the final matrix and return it
+    top_left.matrix_body.extend(bottom_left.matrix_body)
+    top_right.matrix_body.extend(bottom_right.matrix_body)
+    for i in range(top_left.dim()[0]):
+        top_left.matrix_body[i].extend(top_right.matrix_body[i])
+    #print(top_left)
+    return top_left
 
 def E_gcd(a: int, b: int) -> int:
     """
@@ -792,7 +782,7 @@ def undirected_connectivity(self: 'Graph'):
             connected_components.append(new_component)   
     return connected_components
 
-#TODO: Strongly_connected_components
+#TODO: Redo This
 
 def Tarjan_SCC(graphx: 'Graph') -> 'List of Graphs':
     "Return a list consisting of the strongly connected components of graphx"
@@ -965,25 +955,38 @@ class LList:
     def __getitem__(self: 'LList', index: int) -> object:
         """Return the element at index index or the slice delineated thereof."""
 
-        if isinstance(index, slice):
-            #print("index:" + str(index))
-            if index.start < 0 or index.start >= self.num_items or index.stop < 0 or index.stop >= self.num_items:
-                raise IndexError("Invalid Index: " + str(index))
-        elif index < 0 or index >= self.num_items:
-            raise IndexError("Invalid Index: " + str(index))
-
         current_node = self.list_head
         current_node_index = 0
+        list_slice = LList()
 
         if isinstance(index, slice):
-            list_slice = LList()
-            while current_node_index != index.stop:
+            if index.stop == None:
+                target_index = self.num_items
+            elif index.stop < 0 or index.stop > self.num_items:
+                raise IndexError("Invalid Index: " + str(index))
+            else:
+                target_index = index.stop
+            if index.start == None:
+                starting_index = 0
+            elif index.start < 0 or index.start >= self.num_items:
+                raise IndexError("Invalid Index: " + str(index))
+            else:
+                starting_index = index.start
+            while current_node_index != starting_index:
+                current_node = current_node.nxt
+                current_node_index += 1
+            while current_node_index != target_index:
                 list_slice.append(current_node.value)
                 current_node = current_node.nxt
                 current_node_index += 1
             return list_slice
         else:
-            while current_node_index != index:
+            if index < 0 or index >= self.num_items:
+                raise IndexError("Invalid Index: " + str(index))
+            else:
+                target_index = index
+            current_node_index = 0
+            while current_node_index != target_index:
                 current_node = current_node.nxt
                 current_node_index += 1
             return current_node.value
@@ -1534,6 +1537,11 @@ class Vector:
 
         return "Vec:" + str(self.vector_elements)
 
+    def __len__(self: 'Vector') -> int:
+        "Return the number of elements within the current vector"
+
+        return len(self.vector_elements)
+
     def __eq__(self: 'Vector', other: object) -> bool:
         "Return True iff the current vector and other have the same elements in the same order"
 
@@ -1579,11 +1587,13 @@ class Vector:
                     raise TypeError("One of the elements in the input vectors is not a number!")
             return vector_difference
 
-    #TODO:Need implementation of vector scalar multiplication
-    def __mul__(self: 'Vector', other: 'Vector') -> 'Vector':
+    def __mul__(self: 'Vector', other: 'Vector or Scalar') -> 'Vector':
         "Reurn the product of multipling the current vector by other"
 
-        if len(self.vector_elements) != len(other.vector_elements):
+        if isinstance(other, int) or isinstance(other, float):
+            vector_product = [other * element for element in self]
+            return vector_product
+        elif len(self.vector_elements) != len(other.vector_elements):
             raise IndexError("The input vectors are not of equal length!")
         else:
             vector_product = LList()
@@ -1604,26 +1614,32 @@ class Vector:
 
         self.vector_elements[index] = element
 
-    def pop(self: 'Vector', index=0) -> 'num':
-        "Remove and return the element at index index"
-
-        return self.vector_elements.pop(index)
-
     def __contains__(self: 'Vector', item: 'num') -> bool:
         "Return True iff item is present within the current vector"
 
         return item in self.vector_elements
 
+    def pop(self: 'Vector', index=0) -> 'num':
+        "Remove and return the element at index index"
+
+        return self.vector_elements.pop(index)
+
+    def append(self: 'Vector', element: 'num') -> None:
+        "Append the parameter element to the end of the vector"
+
+        self.vector_elements.append(element)
+
     
 #Matrix#
 #TODO: modify the methods of the class such that they react appropriately (raise an error) when None data type is found
-#TODO: Debug matrix multiplication
+#TODO: Debug Strassen's matrix multiplication
 class Matrix:
     "An implementation of the mathematical structure of a matrix"
 
-    def __init__(self: 'Matrix', num_rows=1, num_columns=1) -> None:
+    def __init__(self: 'Matrix', num_rows=1, num_columns=1, data=None) -> None:
         """
-        Initialize num_rows by num_columns matrix object
+        Initialize a num_rows by num_columns matrix object, optionally populated with elements from the data paramater,
+        which is a list of lists where each inner list represents a 
 
         >>> x = Matrix(2, 3)
         >>> x.dim()[0] == 2
@@ -1637,6 +1653,7 @@ class Matrix:
             self.matrix_body.append(LList())
             for column in range(num_columns):
                 self.matrix_body[row].append(0)
+            
 
     #The representation is correct, but using print on str turns the parameter back into its original data type
     #This violates the specified type contract of the function. Fix this somehow
@@ -1813,8 +1830,14 @@ class Matrix:
         True
         """
 
-        #For matrices of this size, the ratio of speed gains to overhead due to using Strassen's Algorithm is not worth using it.
-        if len(self.matrix_body) >= 1000:
+        if isinstance(other, int) or isinstance(other, float):
+            matrix_product = Matrix(self.dim()[0], self.dim()[1])
+            for row in range(self.dim()[0]):
+                for column in range(self.dim()[1]):
+                    matrix_product.setitem(row, column, self.getitem(row, column) * other)
+            return matrix_product
+        #Base Case: For matrices of this size, the ratio of speed gains to overhead due to using Strassen's Algorithm is not worth using it.
+        elif len(self.matrix_body) <= 1:
             if self.dim()[1] != other.dim()[0]:
                 raise IndexError("There is a length mismatch between one of the columns in the first matrix and a row in the second!!!")
             else:
@@ -1831,10 +1854,149 @@ class Matrix:
                             else:
                                 raise TypeError("One of the elements in the input matrices is not a number!")
                 return matrix_product
+        #Recursive Case: Strassen's Algorithm
         else:
-            return S_matrix_mult(self, other) 
+            #Store the dimensions of the matrices
+            x_matrix_size = x.dim()
+            y_matrix_size = y.dim()
 
-    def getitem(self: 'Matrix', row: int, column: int) -> 'num':
+            #Pad the matrices to make them square
+            if x_matrix_size[0] % 2 != 0:
+                new_row = LList()
+                for column in range(x_matrix_size[1]):
+                    new_row.append(0)
+                x.matrix_body.append(new_row)
+            elif x_matrix_size[1] % 2 != 0:
+                for row in range(x_matrix_size[0]):
+                    x.matrix_body[row].append(0)
+
+            if y_matrix_size[0] % 2 != 0:
+                new_row = LList()
+                for column in range(y_matrix_size[1]):
+                    new_row.append(0)
+                y.matrix_body.append(new_row)
+            elif y_matrix_size[1] % 2 != 0:
+                for row in range(y_matrix_size[0]):
+                    y.matrix_body[row].append(0)
+
+            #Partition the matrices into four submatrices
+            x_top_left = Matrix()
+            x_top_left.matrix_body = x.matrix_body[0:x_matrix_size[0] // 2]
+            print('xtop left body')
+            print(x_top_left.matrix_body)
+            for column in range(len(x_top_left.matrix_body)):
+                x_top_left.matrix_body[column] = x_top_left.matrix_body[column][0:x_matrix_size[1] // 2]
+            print(x_top_left)
+
+            x_bottom_left = Matrix()
+            x_bottom_left.matrix_body = x.matrix_body[x_matrix_size[0] // 2:]
+            print('xbottom left body')
+            print(x_bottom_left.matrix_body)
+            for column in range(len(x_bottom_left.matrix_body)):
+                x_bottom_left.matrix_body[column] = x_bottom_left.matrix_body[column][0:x_matrix_size[1] // 2]
+            print(x_bottom_left)
+
+            x_top_right = Matrix()
+            x_top_right.matrix_body = x.matrix_body[0:x_matrix_size[0] // 2]
+            print('x top right body')
+            print(x_top_right.matrix_body)
+            for column in range(len(x_top_right.matrix_body)):
+                x_top_right.matrix_body[column] = x_top_right.matrix_body[column][x_matrix_size[1] // 2:x_matrix_size[1]] 
+
+            print(x_top_right)
+
+            x_bottom_right = Matrix()
+            x_bottom_right.matrix_body = x.matrix_body[x_matrix_size[0] // 2:]
+            print('x bottom right body')
+            print(x_bottom_right.matrix_body)
+            for column in range(len(x_bottom_right.matrix_body)):
+                x_bottom_right.matrix_body[column] = x_bottom_right.matrix_body[column][x_matrix_size[1] // 2:x_matrix_size[1]]
+
+            print(x_bottom_right)
+
+            y_top_left = Matrix()
+            y_top_left.matrix_body = y.matrix_body[0:y_matrix_size[0] // 2]
+            print('top left body')
+            print(y_top_left.matrix_body)
+            for column in range(len(y_top_left.matrix_body)):
+                y_top_left.matrix_body[column] = y_top_left.matrix_body[column][0:y_matrix_size[1] // 2]
+            print(y_top_left)
+
+            y_bottom_left = Matrix()
+            y_bottom_left.matrix_body = y.matrix_body[y_matrix_size[0] // 2:]
+            print('bottom left body')
+            print(y_bottom_left.matrix_body)
+            for column in range(len(y_bottom_left.matrix_body)):
+                y_bottom_left.matrix_body[column] = y_bottom_left.matrix_body[column][0:y_matrix_size[1] // 2]
+            print(y_bottom_left)
+
+            y_top_right = Matrix()
+            y_top_right.matrix_body = y.matrix_body[0:y_matrix_size[0] // 2]
+            print('y top right body')
+            print(y_top_right.matrix_body)
+            for column in range(len(y_top_right.matrix_body)):
+                y_top_right.matrix_body[column] = y_top_right.matrix_body[column][y_matrix_size[1] // 2:y_matrix_size[1]] 
+
+            print(y_top_right)
+
+            y_bottom_right = Matrix()
+            y_bottom_right.matrix_body = y.matrix_body[y_matrix_size[0] // 2:]
+            print('y bottom right body')
+            print(y_bottom_right.matrix_body)
+            for column in range(len(y_bottom_right.matrix_body)):
+                y_bottom_right.matrix_body[column] = y_bottom_right.matrix_body[column][y_matrix_size[1] // 2:y_matrix_size[1]]
+            print(y_bottom_right)
+
+            #Recursively compute Strassen's seven products 
+            p1 =  x_top_left * (y_top_right - y_bottom_right)
+            p2 = (x_top_left + x_top_right) * y_bottom_right
+            p3 = (x_bottom_left + x_bottom_right) * y_top_left
+            p4 =  x_bottom_right * (y_bottom_left - y_top_left)
+            p5 = (x_top_left + x_bottom_right) * (y_top_left + y_bottom_right)
+            p6 = (x_top_right - x_bottom_right) * (y_bottom_left + y_bottom_right)
+            p7 = (x_top_left - x_bottom_left) * (y_top_left + y_top_right)
+
+            #Compute the matrix quadrants using the above products
+            top_left = p5 + p4 - p2 + p6
+            bottom_left = p3 + p4
+            top_right = p1 + p2
+            print('products for bottom')
+            print(p1)
+            print(p5)
+            print(p3)
+            print(p2)
+            bottom_right = p1 + p5 - p3 - p7
+            print('bottom')
+            print(bottom_right)
+            #Combine the above quadrants into the final matrix and return it
+            top_left.matrix_body.extend(bottom_left.matrix_body)
+            top_right.matrix_body.extend(bottom_right.matrix_body)
+            for i in range(top_left.dim()[0]):
+                top_left.matrix_body[i].extend(top_right.matrix_body[i])
+            #print(top_left)
+            return top_left
+
+    def __contains__(self: 'Matrix', value: 'num') -> bool:
+        """
+        Return True iff value is present within the current matrix
+
+        >>> x = Matrix(2, 2)
+        >>> x.setitem(0, 0, 1)
+        >>> x.setitem(0, 1, 3)
+        >>> x.setitem(1, 0, 4)
+        >>> x.setitem(1, 1, 5)
+        >>> 5 in x
+        True
+        >>> 100 in x
+        False
+        """
+
+        for row in self.matrix_body:
+            if value in row:
+                return True
+        return False
+
+    def getitem(self: 'Matrix', row: int, column: int):
         """
         Return the value at row row and column column within the current matrix
 
@@ -1863,26 +2025,6 @@ class Matrix:
         """
 
         self.matrix_body[row][column] = value
-
-    def __contains__(self: 'Matrix', value: 'num') -> bool:
-        """
-        Return True iff value is present within the current matrix
-
-        >>> x = Matrix(2, 2)
-        >>> x.setitem(0, 0, 1)
-        >>> x.setitem(0, 1, 3)
-        >>> x.setitem(1, 0, 4)
-        >>> x.setitem(1, 1, 5)
-        >>> 5 in x
-        True
-        >>> 100 in x
-        False
-        """
-
-        for row in self.matrix_body:
-            if value in row:
-                return True
-        return False
 
 ##REALLY ROUGH TESTING##
 ##TO DO: Improve
