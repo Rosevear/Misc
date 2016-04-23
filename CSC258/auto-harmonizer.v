@@ -1,4 +1,4 @@
-/NOTE: This code has been modified from its original form
+//NOTE: This code has been modified from its original form
 //Original code by John Loomis
 //Taken from: http://www.johnloomis.org/digitallab/audio/audio3/audio3.html 
 //and :http://www.johnloomis.org/digitallab/ps2lab1/ps2lab1.html#top
