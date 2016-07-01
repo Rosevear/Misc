@@ -964,6 +964,12 @@ def Topoological_Sort(graphx: 'Graph') -> 'LList':
         current_node_label -= 1
     return nodes_and_labels
 
+def Recursive_DFS(graphx: 'Graph'):
+    ""
+
+#Kosaraju's Algorithm For Computing Strongly Connected Components
+def SCC
+
 ###DATA STRUCTURES###
 class Node:
 
