@@ -1,5 +1,8 @@
 import doctest
+<<<<<<< HEAD
 import math
+=======
+>>>>>>> 065814e8b6dfd54a9fe3d6ee12331e28e75be793
 import random
 
 ###ALGORITHMS###
@@ -651,6 +654,35 @@ def randomized_selection(listx, k):
         else:
             return randomized_selection(partitioned_list[new_pivot_index + 1:], k - (new_pivot_index + 1))
 
+<<<<<<< HEAD
+=======
+##def maximum_subsequence_sum(sequence):
+##    """
+##    Return the maximum contiguous subsequence sum within sequence, and the indices delineating said subsequence.
+##    """
+##
+##    if len(sequence) == 0:
+##        return (0, "N/A", "N/A") #Because of the nature of integer division used to compute the midpoint index,
+##                 #this base case will never actually be reached on inputs >= 1. It is only here
+##                 #for the sake of completeness
+##    elif len(sequence) == 1:
+##        return (sequence[0], 0, 0)
+##    #Recursively compute the maximum subsequence for each half of the original sequence
+##    else:
+##        midpoint_index = len(sequence) // 2
+##        left_maximum = maximum_subsequence_sum(sequence[:midpoint_index])
+##        right_maximum = maximum_subsequence_sum(sequence[midpoint_index:])
+##        split_maximum = (sum(sequence[left_maximum[1]:right_maximum[2] + 1]), left_maximum[1], right_maximum[2] + 1)
+##
+##    #Compare the subsequence sums, returning the tuple which contains the largest sum
+##        if split_maximum[0] > left_maximum[0] and split_maximum[0] > right_maximum[0]:
+##            return (split_maximum, left_maximum[1], right_maximum[2])
+##        elif left_maximum[0] >= right_maximum[0]:
+##            return left_maximum
+##        else:
+##            return right_maximum
+
+>>>>>>> 065814e8b6dfd54a9fe3d6ee12331e28e75be793
 ###Graph Algorithms###
 
 #Need to find a way to infer what minimum cut is represented by each super node, and compare that against the best cut found so far
@@ -677,6 +709,10 @@ def K_contraction(graphx):
             #Merge the non-self looping edges of the contracting node into the accepting node
             accepting_node.adjacent_nodes.extend(contracting_node.adjacent_nodes)
     
+<<<<<<< HEAD
+=======
+#Semi tested
+>>>>>>> 065814e8b6dfd54a9fe3d6ee12331e28e75be793
 def BFS(graphx: 'Graph', node_value: object, start_node_index=0) -> 'GNode':
     """
     Return the node which contains value node_value, otherwise raise an error"
@@ -687,18 +723,32 @@ def BFS(graphx: 'Graph', node_value: object, start_node_index=0) -> 'GNode':
     layer_queue.first().mark_explored()
     while layer_queue.is_empty() == False:
         current_node = layer_queue.first()
+<<<<<<< HEAD
+=======
+        #print(current_node)
+        #print("layer queue first: " + str(layer_queue.first()))
+        #print("current node: " + str(current_node))
+>>>>>>> 065814e8b6dfd54a9fe3d6ee12331e28e75be793
         if current_node.value == node_value:
             for node in graphx.graph_elements:
                 node.reset_node()
             return current_node
         else:
+<<<<<<< HEAD
             layer_queue.dequeue()
+=======
+           # print("Node to dequeue: " + str(layer_queue.first()))
+            #print("before dequeque: " + str(layer_queue))
+            layer_queue.dequeue()
+            #print("After dequeue: " + str(layer_queue))
+>>>>>>> 065814e8b6dfd54a9fe3d6ee12331e28e75be793
             for node in current_node.adjacent_nodes:
                 if node.explored == False:
                     node.mark_explored()
                     layer_queue.enqueue(node)
     raise NodeAbsentError()
 
+<<<<<<< HEAD
 #This implementation has a subtle bug; it is a good question to ask to test debugging skills
 ##def Shortest_Num_Steps(graphx: 'Graph', x: object, y: object) -> int:
 ##    "Return the shortest path distance in terms of steps from node x to node y in graphx"
@@ -747,10 +797,39 @@ def Shortest_Num_Steps(graphx: 'Graph', x: object, y: object) -> int:
     raise AbsentNodeError()
 
 def undirected_CC(graph_x: 'Graph'):
+=======
+#NOT DEBUGGED: Need to make the nodes keep track of ther distance
+def Shortest_Num_Steps(graphx: 'Graph', x: object, y: object) -> int:
+    "Return the shortest path distance in terms of steps from node x to node y in graphx"
+
+    source_node = BFS(graphx, x)
+    layer_queue = Queue()
+    layer_queue.enqueue(source_node)
+    layer_queue.first().mark_explored()
+    path_distance = 0
+    while layer_queue.is_empty() == False:
+        current_node = layer_queue.first()
+        print(current_node)
+        if current_node.value == y:
+            for node in graphx.graph_elements:
+                node.reset_node()
+            return path_distance
+        else:
+            layer_queue.dequeue()
+            path_distance += 1
+            for node in current_node.adjacent_nodes:
+                if node.explored == False:
+                    node.mark_explored()
+                    layer_queue.enqueue(node)
+    raise AbsentNodeError()
+
+def undirected_connectivity(self: 'Graph'):
+>>>>>>> 065814e8b6dfd54a9fe3d6ee12331e28e75be793
     "Return the connected components of the given graph."
 
     connected_components = LList()
     current_node_index = 0
+<<<<<<< HEAD
     for node in graph_x.graph_elements:
         if node.explored == False:
             component_elements = LList()
@@ -758,6 +837,15 @@ def undirected_CC(graph_x: 'Graph'):
             layer_queue.enqueue(graph_x.graph_elements[current_node_index])
             layer_queue.first().mark_explored()
             while layer_queue.is_empty() == False:
+=======
+    for node in self.graph_elements:
+        if node.explored == False:
+            component_elements = LList()
+            layer_queue = Queue()
+            layer_queue.enqueue(graphx.elements[current_node_index])
+            layer_queue.first().mark_explored()
+            while layer_queue.is_empty == False:
+>>>>>>> 065814e8b6dfd54a9fe3d6ee12331e28e75be793
                 current_node = layer_queue.first()
                 component_elements.append(current_node)
                 layer_queue.dequeue()
@@ -765,6 +853,7 @@ def undirected_CC(graph_x: 'Graph'):
                     if adj_node.explored == False:
                         adj_node.mark_explored()
                         layer_queue.enqueue(adj_node)
+<<<<<<< HEAD
             new_component = Graph()
             new_component.graph_elements = component_elements
             connected_components.append(new_component) 
@@ -773,6 +862,47 @@ def undirected_CC(graph_x: 'Graph'):
         node.reset_node()
     return connected_components
                             
+=======
+                current_node_index += 1
+            new_component = Graph()
+            new_component.graph_elements = component_elements
+            new_component.start = current_node_index
+            connected_components.append(new_component)   
+    return connected_components
+
+#TODO: Redo This
+
+def Tarjan_SCC(graphx: 'Graph') -> 'List of Graphs':
+    "Return a list consisting of the strongly connected components of graphx"
+
+    node_index = 0
+    node_tracker = Stack()
+
+    for node in graphx.graph_elements:
+        if (node.explored == False):
+            strong_connect(node)
+
+    def strong_connect(node: 'GNode') -> 'Graph':
+        "Return the strongly connected component reachable from node."
+
+        DFS_stack = Stack()
+        node.mark_explored()
+        node.low_link = index
+        DFS_stack.push(node)
+        node_tracker.push((node, node_index))
+        node_index += 1
+        while DFS_stack.is_empty() != True:
+            current_node = DFS_stack.peek()
+            DFS_stack.pop()
+            for adj_node in current_node.adjacent_nodes:
+                if adj_node.explored == False:
+                    adj_node.explored = True
+                    DFS_stack.push(adj_node)
+                    node_tracker((adj_node, node_index))
+                    node_index += 1
+                            
+#Semi-tested
+>>>>>>> 065814e8b6dfd54a9fe3d6ee12331e28e75be793
 def Iterative_DFS(graphx: 'Graph', node_value: object, start_node_index=0) -> 'GNode':
     "Return the node which contains node_value, otherwise return an AbsentNodeError"
 
@@ -781,12 +911,22 @@ def Iterative_DFS(graphx: 'Graph', node_value: object, start_node_index=0) -> 'G
     search_stack.peek().mark_explored()
     while search_stack.is_empty() == False:
         current_node = search_stack.peek()
+<<<<<<< HEAD
+=======
+        print(current_node.value)
+>>>>>>> 065814e8b6dfd54a9fe3d6ee12331e28e75be793
         if current_node.value == node_value:
             for node in graphx.graph_elements:
                 node.reset_node()
             return current_node
         else:
+<<<<<<< HEAD
             search_stack.pop()
+=======
+            #print("stack before pop: " + str(search_stack))
+            search_stack.pop()
+            #print("search stack after pop: " + str(search_stack))
+>>>>>>> 065814e8b6dfd54a9fe3d6ee12331e28e75be793
             for node in current_node.adjacent_nodes:
                 if node.explored == False:
                     node.mark_explored()
@@ -799,7 +939,13 @@ def Topoological_Sort(graphx: 'Graph') -> 'LList':
     Return a list of graph nodes in topological order
 
     Pre-condition: graphx must be acyclic
+<<<<<<< HEAD
     """ 
+=======
+    """
+
+    
+>>>>>>> 065814e8b6dfd54a9fe3d6ee12331e28e75be793
     nodes_and_labels = LList()
     current_node_label = graphx.num_nodes()
     for element in graphx.graph_elements:
@@ -1072,18 +1218,33 @@ class LList:
         self.num_items = 0
 
     #TODO: Implement this
+<<<<<<< HEAD
 ##    def reverse(self: 'LList') -> None:
 ##        """reverse the ordering of the elements in the list"""
 ##	pass
+=======
+    def reverse(self: 'LList') -> None:
+        """reverse the ordering of the elements in the list"""
+
+        pass
+>>>>>>> 065814e8b6dfd54a9fe3d6ee12331e28e75be793
 
 ###Stack###
 
 class EmptyStackError(Exception):
     "An exception raised when the stack is empty and any access operations are performed upon it"
+<<<<<<< HEAD
     pass
 
 class Stack:
     """An implementation of the Stack ADT"""
+=======
+
+    pass
+
+class Stack:
+    """A Stack data strucutre."""
+>>>>>>> 065814e8b6dfd54a9fe3d6ee12331e28e75be793
 
     def __init__(self: 'Stack') -> None:
         """Initialize an insance of the Stack ADT."""
@@ -1324,6 +1485,7 @@ class NodeAbsentError(Exception):
 class GNode(Node):
     def __init__(self: 'GNode', value) -> None:
         "Initialize a graph node object with value value."
+<<<<<<< HEAD
         super().__init__(value)
         self.adjacent_nodes = LList()
         self.explored = False
@@ -1335,14 +1497,38 @@ class GNode(Node):
 
     def __eq__(self: 'GNode', other: 'GNode') -> bool:
         "Return true iff the current node and other have the same value"
+=======
+
+        super().__init__(value)
+        self.adjacent_nodes = LList()
+        self.explored = False
+        #For strongly connected components algorithms
+        self.low_link = None
+
+    #TODO: Make this more informative
+    def __repr__(self: 'GNode') -> str:
+        "Return a string representation of this GNode"
+
+        return "GNode(" + str(self.value) + ")"
+
+    #Review whether nodes or not should be unique in their values
+    def __eq__(self: 'GNode', other: 'GNode') -> bool:
+        "Return true iff the current node and other have the same value"
+
+>>>>>>> 065814e8b6dfd54a9fe3d6ee12331e28e75be793
         return self.value == other.value
 
     def mark_explored(self: 'GNode') -> None:
         "Mark this node as having been explored"
+<<<<<<< HEAD
+=======
+
+>>>>>>> 065814e8b6dfd54a9fe3d6ee12331e28e75be793
         self.explored = True
 
     def reset_node(self: 'GNode') -> None:
         "Mark this node as unexplored"
+<<<<<<< HEAD
         self.explored = False
         self.distance = 0
 
@@ -1364,11 +1550,43 @@ class Graph:
         "Return True iff item is a node (value) in the graph, else return false"
         for node in self.graph_elements:
             if node.value == value:
+=======
+
+        self.explored = False
+
+#Review and debug this implementation, making sure the final version is used correctly by the graph algorithms
+class Graph:
+    "An directed/undirected graph object"
+
+    def __init__(self: 'Graph', item=None, directed=False) -> None:
+        "Initialize an empty graph, or a graph with a single starting node."
+
+        self.graph_elements = LList()
+        if item != None:
+            self.start = GNode(item)
+            self.graph_elements.append(self.start)
+        else:
+            self.start = None
+        self.directed = directed
+
+    #TODO: Make this more informative
+    def __repr__(self: 'Graph') -> str:
+        "Return a string representation of this graph object"
+
+        "Graph:\n" + str(self.start)
+
+    def __contains__(self: 'Graph', item: object) -> bool:
+        "Return True iff item is a node (value) in the graph"
+
+        for node in self.graph_elements:
+            if node.value == item:
+>>>>>>> 065814e8b6dfd54a9fe3d6ee12331e28e75be793
                 return True
         return False
 
     def __len__(self: 'Graph') -> int:
         "Return the number of nodes in this graph"
+<<<<<<< HEAD
         return len(self.graph_elements)
 
     #TODO: Determine what should happen if a node does not exist (Exception? Return False?)	
@@ -1382,6 +1600,15 @@ class Graph:
     def adjacent(self: 'Graph', x, y) -> bool:
         "Return True iff there is an edge between nodes x and y"
         x_adjacents = self.get_node_by_value(x).adjacent_nodes
+=======
+
+        return len(self.graph_elements)
+
+    def adjacent(self: 'Graph', x: 'GNode', y: 'GNode') -> bool:
+        "Return True iff  there is an edge between nodes x and y"
+
+        x_adjacents = BFS(self, x).adjacent_nodes
+>>>>>>> 065814e8b6dfd54a9fe3d6ee12331e28e75be793
         for node in x_adjacents:
             if node.value == y:
                 return True
@@ -1389,6 +1616,7 @@ class Graph:
 
     def neighbours(self: 'Graph', x: 'GNode') -> 'LList':
         "Return a list of all nodes y, such that there is an edge from x to y"
+<<<<<<< HEAD
         node_x = self.get_node_by_value(x)
         return node_x.adjacent_nodes
 
@@ -1412,11 +1640,41 @@ class Graph:
         Delete the node and its corresponding edges, if present.
         """
         node_to_delete = self.get_node_by_value(x)
+=======
+
+        x_adjacents = BFS(self, x).adjacent_nodes
+        neighbour_list = LList()
+        for node in x_adjacents:
+            neighbour_list.append(node.value)
+        return neighbour_list
+
+    def add_node(self: 'Graph', x: object, y: object) -> None:
+        """"
+        Attach a node corresponding to object y to the node corresponsing to
+        object x, with an edge, connecting it to the graph
+        """
+
+        new_node = GNode(y)
+        old_node = BFS(self, x)
+        old_node.adjacent_nodes.append(new_node)
+        if self.directed == False:
+            new_node.adjacent_nodes.append(old_node)
+        self.graph_elements.append(new_node)
+
+    def delete_node(self: 'Graph', item: object) -> None:
+        """
+        Delete the graph node and the concomitant edges corresponding to obejct item, if present.
+        Otherwise, return an AbsentNodeError
+        """
+
+        node_to_delete = BFS(self, item)
+>>>>>>> 065814e8b6dfd54a9fe3d6ee12331e28e75be793
         for node in node_to_delete.adjacent_nodes:
             node.adjacent_nodes.remove(node_to_delete)
         node_to_delete.adjacent_nodes = LList()
         self.graph_elements.remove(node_to_delete)
 
+<<<<<<< HEAD
     def add_edge(self: 'Graph', x, y) -> None:
         """
         Add an edge connecting the nodes which correspond to objects x and y, if present.
@@ -1424,12 +1682,23 @@ class Graph:
         """
         node_x = self.get_node_by_value(x)
         node_y = self.get_node_by_value(y)
+=======
+    def add_edge(self: 'Graph', x: object, y: object) -> None:
+        """
+        Add an edge connecting the nodes which correspond to objects x and y, if present.
+        Otherwise, raise an AbsentNodeError. If the graph is directed, x will point to y.
+        """
+
+        node_x = BFS(self, x)
+        node_y = BFS(self, y)
+>>>>>>> 065814e8b6dfd54a9fe3d6ee12331e28e75be793
         node_x.adjacent_nodes.append(node_y)
         if self.directed == False:
             node_y.adjacent_nodes.append(node_x)
                
     def delete_edge(self: 'Graph', x: object, y: object) -> None:
         """
+<<<<<<< HEAD
         Remove the edge attaching nodes, if present,  which correspond to objects x and y, 
 	possibly breaking the graph into multiple connected components. Returns true on success false on failure.
         """
@@ -1445,6 +1714,30 @@ class Graph:
 
     def is_empty(self: 'Graph') -> bool:
         """Return True iff there are no nodes in the given graph"""
+=======
+        Remove the edge attaching nodes, if present,  which correspond to objects x and y,
+        breaking the graph into multiple connected components. Otherwise, raise an AbsentNodeError
+        """
+    
+        node_x = BFS(self, x)
+        node_y = BFS(self, y)
+        node_x.adjacent_nodes.remove(node_y)
+        node_y.adjacent_nodes.remove(node_x)
+
+    def set_value(self: 'Graph', node: object , item: object) -> None:
+        "Set the value of node to value item."
+
+        BFS(self, node).value = item
+
+    def get_value(self: 'Graph', i: 'int') -> object:
+        "Return the value of the node indexed at i"
+
+        return self.graph_elements[i].value
+
+    def is_empty(self: 'Graph') -> bool:
+        """Return True iff there are no nodes in the given graph"""
+
+>>>>>>> 065814e8b6dfd54a9fe3d6ee12331e28e75be793
         return self.__len__() == 0
 
 #Vector#
@@ -1957,6 +2250,7 @@ class Matrix:
 
         self.matrix_body[row][column] = value
 
+<<<<<<< HEAD
 ##Priority_Queue##
 
 class Priority_Node(Node):
@@ -2329,3 +2623,47 @@ x.add_node(17)
 ##print("Run the matrix tests")
 ##z = x * y
 ##print(z == a)
+=======
+##REALLY ROUGH TESTING##
+##TO DO: Improve
+
+print("Build A Graph for testing")
+x = Graph(1)
+x.add_node(1, 2)
+x.add_node(1, 3)
+x.add_node(1, 4)
+x.add_node(2, 5)
+x.add_node(2, 6)
+x.add_node(4, 7)
+x.add_node(4, 8)
+x.add_node(5, 9)
+x.add_node(5, 10)
+x.add_node(7, 11)
+x.add_node(7, 12)
+
+print("Run the graph tests")
+#Shortest_Num_Steps(x, 1, 11)
+
+print("Build a matrix for testing")
+x = Matrix(2, 2)
+x.setitem(0, 0, 1)
+x.setitem(0, 1, 3)
+x.setitem(1, 0, 4)
+x.setitem(1, 1, 5)
+
+y = Matrix(2, 2)
+y.setitem(0, 0, 2)
+y.setitem(0, 1, 2)
+y.setitem(1, 0, 1)
+y.setitem(1, 1, 2)
+
+a = Matrix(2, 2)
+a.setitem(0, 0, 5)
+a.setitem(0, 1, 8)
+a.setitem(1, 0, 13)
+a.setitem(1, 1, 18)
+
+print("Run the matrix tests")
+z = x * y
+print(z == a)
+>>>>>>> 065814e8b6dfd54a9fe3d6ee12331e28e75be793
